@@ -17,9 +17,7 @@ st.write("Draw a tarot card and receive an AI-powered reading!")
 
 df = pd.read_csv("tarot_cards.csv")
 
-# -------------------------------------------
-# 🔥 GitHub에 있는 이미지 URL 불러오기 함수
-# -------------------------------------------
+
 
 # 예: https://raw.githubusercontent.com/USERNAME/REPO/main/tarot_images/The Fool.png
 GITHUB_IMAGE_BASE_URL = "https://github.com/rigovicm/your-tarot-app/tree/main/tarot_images"
