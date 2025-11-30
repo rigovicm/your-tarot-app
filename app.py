@@ -19,7 +19,7 @@ df = pd.read_csv("tarot_cards.csv")
 GITHUB_IMAGE_BASE_URL = "https://github.com/rigovicm/your-tarot-app/tree/main/tarot_images"
 
 def load_github_image(card_name):
-    safe_name = card_name.replace(" ", "%20")
+    safe_name = card_name.replace(" ", "_")
     image_url = f"{GITHUB_IMAGE_BASE_URL}/{safe_name}.png"
 
     try:
