@@ -15,9 +15,14 @@ st.write("Choose your reading type!")
 
 
 
-def get_github_image_url(card_name):
-    encoded = urllib.parse.quote(f"{card_name}.png") 
-    return f"{GITHUB_BASE}{encoded}"
+def load_github_image_url(card_name):
+    safe_name = card_name.strip() 
+    safe_name = safe_name.replace("/", "_")  
+    safe_name = safe_name.replace(" ", "_")  
+
+    safe_name = urllib.parse.quote(safe_name)
+
+    image_url = f"{GITHUB_IMAGE_BASE_URL}/{safe_name}.png"
 
 
 
