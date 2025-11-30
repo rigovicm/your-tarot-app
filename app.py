@@ -8,7 +8,7 @@ import urllib.parse
 
 st.set_page_config(page_title="Tarot Reader", page_icon="🔮", layout="wide")
 
-st.title("🔮 Tarot Card Reading (No OpenAI)")
+st.title("🔮 Tarot Card Reading")
 st.write("Draw a tarot card and receive an interpretation!")
 
 # Load CSV
