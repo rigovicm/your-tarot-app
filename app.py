@@ -1,32 +1,26 @@
 import streamlit as st
 import pandas as pd
 import random
-import os
 import requests
 from io import BytesIO
-from openai import OpenAI
-from dotenv import load_dotenv
+from PIL import Image
 
-load_dotenv()
-client = OpenAI(api_key=os.getenv("OPENAI_API_KEY"))
+st.set_page_config(page_title="AI-Free Tarot Reader", page_icon="🔮", layout="wide")
 
-st.set_page_config(page_title="AI Tarot Reader", page_icon="🔮", layout="wide")
-
-st.title("🔮 AI Tarot Card Reading")
-st.write("Draw a tarot card and receive an AI-powered reading!")
+st.title("🔮 Tarot Card Reading")
+st.write("Draw a tarot card and receive an interpretation — no API required!")
 
 df = pd.read_csv("tarot_cards.csv")
 
+# -------------------------------------------
+# 🔥 GitHub 이미지 URL
+# -------------------------------------------
 
-
-# 예: https://raw.githubusercontent.com/USERNAME/REPO/main/tarot_images/The Fool.png
 GITHUB_IMAGE_BASE_URL = "https://github.com/rigovicm/your-tarot-app/tree/main/tarot_images"
 
 def load_github_image(card_name):
-    """
-    Load tarot card image from GitHub repository.
-    """
-    image_url = f"{GITHUB_IMAGE_BASE_URL}/{card_name}.png"
+    safe_name = card_name.replace(" ", "%20")
+    image_url = f"{GITHUB_IMAGE_BASE_URL}/{safe_name}.png"
 
     try:
         response = requests.get(image_url)
@@ -38,27 +32,28 @@ def load_github_image(card_name):
         return None
 
 
-# -------------------------------------------
-# 🔮 AI Tarot Reading Generator
-# -------------------------------------------
+def simple_reading(card_name, orientation, meaning):
+    templates = [
+        f"The energy of **{card_name} ({orientation})** is influencing you today.",
+        f"The appearance of **{card_name}** suggests an important message.",
+        f"This card reflects what your spirit needs to hear right now.",
+        f"Your current path is being guided by the energy of **{card_name}**.",
+    ]
 
-def generate_reading(card_name, orientation, meaning):
-    prompt = f"""
-You are a mystical tarot fortune teller.
+    ending = [
+        "Trust the process and stay open to change.",
+        "Let intuition guide your next steps.",
+        "Focus on what truly matters to you.",
+        "A new opportunity may soon reveal itself.",
+        "Stay grounded and listen to your inner voice.",
+    ]
 
-Card: {card_name}
-Orientation: {orientation}
-Meaning: {meaning}
-
-Give an insightful, friendly, magical tarot reading.
-"""
-
-    response = client.chat.completions.create(
-        model="gpt-4o-mini",
-        messages=[{"role": "user", "content": prompt}]
+    return (
+        random.choice(templates)
+        + "\n\n"
+        + f"**Meaning:** {meaning}\n\n"
+        + random.choice(ending)
     )
-
-    return response.choices[0].message.content
 
 
 # -------------------------------------------
@@ -66,18 +61,15 @@ Give an insightful, friendly, magical tarot reading.
 # -------------------------------------------
 
 if st.button("Draw a Tarot Card"):
-    # 1. Pick a card
     card = df.sample(1).iloc[0]
     card_name = card["Card"]
 
-    # 2. Orientation
     orientation = random.choice(["Upright", "Reversed"])
     meaning = card["Upright Meaning"] if orientation == "Upright" else card["Reversed Meaning"]
 
     st.subheader(f"✨ Card Drawn: {card_name} ({orientation})")
 
-    # 3. Load image from GitHub
-    from PIL import Image
+    # Load image from GitHub
     image = load_github_image(card_name)
 
     if image:
@@ -85,10 +77,9 @@ if st.button("Draw a Tarot Card"):
     else:
         st.warning("Image not found in GitHub repository.")
 
-    # 4. AI Reading
-    reading = generate_reading(card_name, orientation, meaning)
+    # Show reading without OpenAI
     st.markdown("### 🔮 Your Reading")
-    st.write(reading)
+    st.write(simple_reading(card_name, orientation, meaning))
 
 else:
     st.info("Click the button above to draw a tarot card.")
