@@ -2,6 +2,52 @@ import streamlit as st
 import pandas as pd
 import random
 import urllib.parse
+import random
+
+def generate_fortune_text(card_name, orientation, meaning):
+    # Atmosphere / tone
+    tones = [
+        "A calm, spiritual energy surrounds you today.",
+        "A new path is quietly opening before you.",
+        "Your intuition feels sharper and clearer than usual.",
+        "A subtle yet powerful shift is moving through your life.",
+        "Something deep within you is beginning to awaken.",
+    ]
+
+    # Advice templates
+    advice_templates = [
+        "This card encourages you to take a closer look at your current situation.",
+        "A choice you make now will influence the direction of your future.",
+        "A hidden opportunity is getting ready to reveal itself.",
+        "Pay attention to the emotions or signs you may have overlooked.",
+        "If you take a small step forward, the energy around you will start to flow in your favor.",
+    ]
+
+    tone = random.choice(tones)
+    advice = random.choice(advice_templates)
+
+    fortune = f"""
+### 🔮 Tarot Interpretation  
+**Card:** {card_name} ({orientation})
+
+**General Meaning:**  
+{meaning}
+
+---
+
+### ✨ Overall Reading  
+{tone}  
+The appearance of **{card_name}** suggests that this card carries an important message for you today.  
+{meaning}
+
+---
+
+### 📌 Advice for You  
+{advice}
+"""
+
+    return fortune
+
 
 
 df = pd.read_csv("tarot_cards.csv")
@@ -49,7 +95,9 @@ if st.button("Draw Today's Fortune"):
     st.subheader(f"✨ {card['name']} ({card['orientation']})")
     st.image(card["image"], width=300)
     st.markdown("#### 🔮 Interpretation")
-    st.write(card["meaning"])
+    fortune_text = generate_fortune_text(card['name'], card['orientation'], card['meaning'])
+    st.markdown(fortune_text)
+
 
 st.markdown("---")
 
@@ -68,17 +116,20 @@ if st.button("Start to draw 3 cards"):
         st.subheader("🕰️ Past")
         st.image(past["image"], width=250)
         st.write(f"**{past['name']} ({past['orientation']})**")
-        st.write(past["meaning"])
+        st.markdown(generate_fortune_text(past['name'], past['orientation'], past['meaning']))
+
 
     # Present
     with col2:
         st.subheader("📌 Present")
         st.image(present["image"], width=250)
         st.write(f"**{present['name']} ({present['orientation']})**")
-        st.write(present["meaning"])
+        st.markdown(generate_fortune_text(present['name'], present['orientation'], present['meaning']))
+
 
     # Future
     with col3:
         st.subheader("🔮 Future")
         st.image(future["image"], width=250)
-        st.write(future["meaning"])
+        st.markdown(generate_fortune_text(future['name'], future['orientation'], future['meaning']))
+
